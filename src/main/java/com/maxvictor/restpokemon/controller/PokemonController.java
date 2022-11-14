@@ -6,27 +6,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("pokemons")
+@RequestMapping("/pokemons")
 public class PokemonController {
 
     @Autowired
     private PokemonService service;
 
     @PostMapping
-    public Pokemon addPokemon(@RequestBody Pokemon Pokemon) {
+    public Pokemon addPokemon(@Valid @RequestBody Pokemon Pokemon) {
         return service.savePokemon(Pokemon);
     }
 
     @GetMapping
     public List<Pokemon> findAllPokemons() {
+        if(service.getPokemons().isEmpty()){
+            populate();
+        }
         return service.getPokemons();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public Pokemon findPokemonById(@PathVariable int id) {
         return service.getPokemonById(id);
     }
@@ -36,18 +39,21 @@ public class PokemonController {
         return service.updatePokemon(Pokemon);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public String deletePokemon(@PathVariable int id) {
         return service.deletePokemon(id);
     }
 
-    @GetMapping("populate")
-    private Object populate(){
-        String uri = "https://pokeapi.co/api/v2/pokemon";
-        RestTemplate restTemplate = new RestTemplate();
+    private String populate(){
+        for(int i = 1; i <= 10; i++){
+            String uri = "https://pokeapi.co/api/v2/pokemon/" + i;
+            RestTemplate restTemplate = new RestTemplate();
 
-        Object result = restTemplate.getForObject(uri, Object.class);
+            Pokemon result = restTemplate.getForObject(uri, Pokemon.class);
 
-        return result;
+            service.savePokemon(result);
+        }
+
+        return "Static Memory Populated";
     }
 }

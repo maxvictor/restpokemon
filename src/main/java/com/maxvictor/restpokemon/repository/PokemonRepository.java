@@ -29,12 +29,13 @@ public class PokemonRepository {
     }
 
     public Pokemon save(Pokemon p) {
-        Pokemon product = new Pokemon();
-        product.setId(p.getId());
-        product.setName(p.getName());
-        product.setUrl(p.getUrl());
-        list.add(product);
-        return product;
+        Pokemon pokemon = new Pokemon();
+        pokemon.setId(p.getId());
+        pokemon.setHeight(p.getHeight());
+        pokemon.setWeight(p.getWeight());
+        pokemon.setName(p.getName());
+        list.add(pokemon);
+        return pokemon;
     }
 
     public String delete(Integer id) {
@@ -53,10 +54,14 @@ public class PokemonRepository {
             }
         }
         Pokemon pokemon1 = new Pokemon();
-        pokemon1.setId(id);
-        pokemon1.setName(pokemon.getName());
-        pokemon1.setUrl(pokemon.getUrl());
+        pokemon.setId(pokemon.getId());
+        pokemon.setHeight(pokemon.getHeight());
+        pokemon.setWeight(pokemon.getWeight());
+        pokemon.setName(pokemon.getName());
+        list.add(pokemon);
+
         list.set(idx, pokemon);
         return pokemon1;
     }
+
 }
